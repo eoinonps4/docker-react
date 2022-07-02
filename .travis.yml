@@ -27,19 +27,19 @@ script:
 deploy:
   provider: elasticbeanstalk
   # region on aws we created it
-  region: 'us-east-2'
+  region: 'us-east-1'
   # This is the name of the app we create
-  app: 'docker-react'
-  env: 'Dockerreact-env'
+  app: 'docker-react-app'
+  env: 'Dockerreactapp-env'
   # When travis is deploying our code, it takes everything and zips it up and transfers to aws
   # What it transfers to is an S3 bucket, so we need to tell it the bukcet to send it to
   # When the S3 bucket gets an updated, that's how it lets EB know it should redeploy
   # any EB envs will reuse this bukcet
-  bucket_name: ""
+  bucket_name: "elasticbeanstalk-us-east-1-960659685635"
   # The folder name of this particular project
   # A folder isnt created til theres 1+ apps, so
   # first time around the path ins s3 bucket is just project name directly
-  bucket_path: "docker-react"
+  bucket_path: "docker-react-app"
   # This is for telling travis it should only deploy once 
   # master branch is updated
   on:
