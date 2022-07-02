@@ -1,3 +1,4 @@
+# This whole part is concerned with building image and running test suite
 language: generic
 # If using docker, you need super user permsissions, this tells travis we need super user permissions
 sudo: required
@@ -19,3 +20,32 @@ before_install:
 # Travis will listen for exit codes for cmds here, anything other than 0 is considered a failed build
 script:
   - docker run -e CI=true eoinwhelan64/docker-react npm run test
+
+
+# This section is concerned with DEPLOYINg the app once above is done
+# travis has a default setting for elasticbeanstalk, so we can just specify
+deploy:
+  provider: elasticbeanstalk
+  # region on aws we created it
+  region: 'us-east-2'
+  # This is the name of the app we create
+  app: 'docker-react'
+  env: 'Dockerreact-env'
+  # When travis is deploying our code, it takes everything and zips it up and transfers to aws
+  # What it transfers to is an S3 bucket, so we need to tell it the bukcet to send it to
+  # When the S3 bucket gets an updated, that's how it lets EB know it should redeploy
+  # any EB envs will reuse this bukcet
+  bucket_name: ""
+  # The folder name of this particular project
+  # A folder isnt created til theres 1+ apps, so
+  # first time around the path ins s3 bucket is just project name directly
+  bucket_path: "docker-react"
+  # This is for telling travis it should only deploy once 
+  # master branch is updated
+  on:
+    branch: master
+  # Lastly specifcy the keys that travis should use to deploy over to aws
+  # these are API keys for a specific IAM user/agent which deploys for us
+  # the env variables are saved encrypted in travis 
+  access_key_id: $AWS_ACCESS_KEY
+  secret_access_key: "$AWS_SECRET_KEY"
