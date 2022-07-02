@@ -1,0 +1,21 @@
+language: generic
+# If using docker, you need super user permsissions, this tells travis we need super user permissions
+sudo: required
+# Tell travis the stuff you will need. Specifcying docker tells travis to have docker ready
+services:
+  - docker
+# tell tarvis what commands to execute before our tests are ran
+# We want to build docker image before test
+# Literally a unix command
+# Need to tag the image so that we can use it easily within travis 
+# If didnt tag you would have do track the sha code and itd be awkward
+# dont need the full tag either, could literally be -t MYTAG or whatever
+# also we tagged it the same name as our github repo, prob could have called github repo front end
+# or the folder docker-react to avoid confusion, but theyre equivalent
+before_install:
+  - docker build -t eoinwhelan64/docker-react -f Dockerfile.dev .
+
+# The commands necessary to actually execute our tests
+# Travis will listen for exit codes for cmds here, anything other than 0 is considered a failed build
+script:
+  - docker run -e CI=true eoinwhelan64/docker-react npm run test
